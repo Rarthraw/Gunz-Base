@@ -3,6 +3,7 @@
 #include "MLocale.h"
 #include "MZFileSystem.h"
 #include "MDebug.h"
+#include <charconv>
 #include <cstring>
 #include <string>
 #include <algorithm>
@@ -35,18 +36,22 @@ void MXmlNode::GetText(char* sOutStr, int nMaxCharNum)
 	if (!m_pDomNode)
 		return;
 
-	auto value = m_pDomNode->value();
-	if (!value)
+	const char* value = m_pDomNode->value();
+	if (!value) {
+		if (nMaxCharNum > 0)
+			sOutStr[0] = 0;
 		return;
+	}
 
-	if (nMaxCharNum == -1)
+	const size_t value_size = m_pDomNode->value_size();
+
+	if (nMaxCharNum <= 0)
 	{
-		strcpy_unsafe(sOutStr, value);
+		assert(false && "Invalid size passed to MXmlNode::GetText");
+		return;
 	}
-	else
-	{
-		strcpy_safe(sOutStr, nMaxCharNum, value);
-	}
+
+	strncpy_safe(sOutStr, nMaxCharNum, value, value_size);
 }
 
 void MXmlNode::SetText(const char* sText)
@@ -245,21 +250,15 @@ bool MXmlElement::GetAttribute(char* sOutText, int maxlen, const char* sAttrName
 
 bool MXmlElement::GetAttribute(int* ipOutValue, const char* sAttrName, int nDefaultValue)
 {
-	char szTemp[256];
-	memset(szTemp, 0, 256);
-
-	if (!GetAttribute(szTemp, sAttrName))
-	{
+	auto attr = GetAttribute(sAttrName);
+	if (!attr) {
 		*ipOutValue = nDefaultValue;
 		return false;
 	}
 
-	try
-	{
-		*ipOutValue = atoi(szTemp);
-	}
-	catch (...)
-	{
+	auto [ptr, ec] = std::from_chars(attr->data(), attr->data() + attr->size(), *ipOutValue);
+
+	if (ec != std::errc()) {
 		*ipOutValue = nDefaultValue;
 		return false;
 	}
@@ -269,21 +268,15 @@ bool MXmlElement::GetAttribute(int* ipOutValue, const char* sAttrName, int nDefa
 
 bool MXmlElement::GetAttribute(float* fpOutValue, const char* sAttrName, float fDefaultValue)
 {
-	char szTemp[256];
-	memset(szTemp, 0, 256);
-
-	if (!GetAttribute(szTemp, sAttrName))
-	{
+	auto attr = GetAttribute(sAttrName);
+	if (!attr) {
 		*fpOutValue = fDefaultValue;
 		return false;
 	}
 
-	try
-	{
-		*fpOutValue = (float)atof(szTemp);
-	}
-	catch (...)
-	{
+	auto [ptr, ec] = std::from_chars(attr->data(), attr->data() + attr->size(), *fpOutValue);
+
+	if (ec != std::errc()) {
 		*fpOutValue = fDefaultValue;
 		return false;
 	}
@@ -292,43 +285,44 @@ bool MXmlElement::GetAttribute(float* fpOutValue, const char* sAttrName, float f
 }
 bool MXmlElement::GetAttribute(bool* bOutValue, const char* sAttrName, bool bDefaultValue)
 {
-	char szTemp[1024];
-	memset(szTemp, 0, 1024);
-
-	if (!GetAttribute(szTemp, sAttrName))
-	{
+	auto attr_opt = GetAttribute(sAttrName);
+	if (!attr_opt) {
 		*bOutValue = bDefaultValue;
 		return false;
 	}
+	auto attr = *attr_opt;
 
-	if (!_stricmp(szTemp, "true"))
-	{
+	auto iequals = [](StringView a, StringView b) {
+		if (a.size() != b.size())
+			return false;
+		for (size_t i = 0; i < a.size(); ++i)
+			if (tolower(a[i]) != tolower(b[i]))
+				return false;
+		return true;
+	};
+
+	if (iequals(attr, "true")) {
 		*bOutValue = true;
 	}
-	else if (!_stricmp(szTemp, "false"))
-	{
+	else if (iequals(attr, "false")) {
 		*bOutValue = false;
 	}
-	else
-	{
+	else {
 		*bOutValue = bDefaultValue;
 	}
+
 	return true;
 }
 
 bool MXmlElement::GetAttribute(std::string* pstrOutValue, const char* sAttrName, const char* sDefaultValue)
 {
-	char szTemp[256];
-	memset(szTemp, 0, 256);
-
-	if (!GetAttribute(szTemp, sAttrName))
-	{
+	auto attr = GetAttribute(sAttrName);
+	if (!attr) {
 		*pstrOutValue = sDefaultValue;
 		return false;
 	}
 
-	*pstrOutValue = szTemp;
-
+	pstrOutValue->assign(attr->data(), attr->size());
 	return true;
 }
 
@@ -506,60 +500,78 @@ bool MXmlElement::GetChildContents(bool* bOutValue, const char* sChildTagName)
 
 void MXmlElement::GetContents(int* ipOutValue)
 {
-	char sTemp[256];
-	memset(sTemp, 0, 256);
-
-	MXmlNode::GetText(sTemp);
-
-	try
-	{
-		*ipOutValue = atoi(sTemp);
+	if (!m_pDomNode || !m_pDomNode->value()) {
+		*ipOutValue = 0;
+		return;
 	}
-	catch (...)
-	{
+
+	StringView text{ m_pDomNode->value(), m_pDomNode->value_size() };
+	if (text.empty()) {
+		*ipOutValue = 0;
+		return;
+	}
+
+	auto [ptr, ec] = std::from_chars(text.data(), text.data() + text.size(), *ipOutValue);
+
+	if (ec != std::errc()) {
 		*ipOutValue = 0;
 	}
 }
 
 void MXmlElement::GetContents(bool* bpOutValue)
 {
-	char sTemp[64];
-	memset(sTemp, 0, 64);
-	MXmlNode::GetText(sTemp);
+	if (!m_pDomNode || !m_pDomNode->value()) {
+		*bpOutValue = false;
+		return;
+	}
 
-	if (!_stricmp(sTemp, "true"))
-	{
+	StringView text{ m_pDomNode->value(), m_pDomNode->value_size() };
+
+	auto iequals = [](StringView a, StringView b) {
+		if (a.size() != b.size())
+			return false;
+		for (size_t i = 0; i < a.size(); ++i)
+			if (tolower(a[i]) != tolower(b[i]))
+				return false;
+		return true;
+	};
+
+	if (iequals(text, "true")) {
 		*bpOutValue = true;
 	}
-	else
-	{
+	else {
 		*bpOutValue = false;
 	}
 }
 
 void MXmlElement::GetContents(float* fpOutValue)
 {
-	char sTemp[256];
-	memset(sTemp, 0, 256);
-
-	MXmlNode::GetText(sTemp);
-
-	try
-	{
-		*fpOutValue = (float)atof(sTemp);
+	if (!m_pDomNode || !m_pDomNode->value()) {
+		*fpOutValue = 0.0f;
+		return;
 	}
-	catch (...)
-	{
+
+	StringView text{ m_pDomNode->value(), m_pDomNode->value_size() };
+	if (text.empty()) {
+		*fpOutValue = 0.0f;
+		return;
+	}
+
+	auto [ptr, ec] = std::from_chars(text.data(), text.data() + text.size(), *fpOutValue);
+
+	if (ec != std::errc()) {
 		*fpOutValue = 0.0f;
 	}
 }
 
 void MXmlElement::GetContents(std::string* pstrValue)
 {
-	char sTemp[256];
-	memset(sTemp, 0, 256);
-	MXmlNode::GetText(sTemp);
-	*pstrValue = sTemp;
+	if (!m_pDomNode || !m_pDomNode->value()) {
+		pstrValue->clear();
+		return;
+	}
+
+	pstrValue->assign(m_pDomNode->value(), m_pDomNode->value_size());
 }
 
 bool MXmlElement::RemoveAttribute(const char* sAttrName)

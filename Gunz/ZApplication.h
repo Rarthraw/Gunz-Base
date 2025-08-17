@@ -11,6 +11,7 @@
 #include "ZStageInterface.h"
 #include "ZSkill.h"
 #include "ZWorldManager.h"
+#include <memory>
 
 #include "../RealSpace2/Include/RAniEventInfo.h"
 
@@ -54,10 +55,10 @@ public:
 	};
 
 private:
-	ZGameInterface* m_pGameInterface;
+	std::unique_ptr<ZGameInterface> m_pGameInterface;
 	GunzState				m_nInitialState;
-	ZStageInterface* m_pStageInterface;
-	ZOptionInterface* m_pOptionInterface;
+	std::unique_ptr<ZStageInterface> m_pStageInterface;
+	std::unique_ptr<ZOptionInterface> m_pOptionInterface;
 	ZLAUNCH_MODE			m_nLaunchMode;
 	std::string				m_szFileName;
 	std::string				m_szCmdLine;
@@ -155,19 +156,19 @@ __forceinline ZGameInterface* ZApplication::GetGameInterface(void)
 {
 	ZApplication* pApp = GetInstance();
 	if (pApp == NULL) return NULL;
-	return pApp->m_pGameInterface;
+	return pApp->m_pGameInterface.get();
 }
 __forceinline ZStageInterface* ZApplication::GetStageInterface(void)
 {
 	ZApplication* pApp = GetInstance();
 	if (pApp == NULL) return NULL;
-	return pApp->m_pStageInterface;
+	return pApp->m_pStageInterface.get();
 }
 __forceinline ZOptionInterface* ZApplication::GetOptionInterface(void)
 {
 	ZApplication* pApp = GetInstance();
 	if (pApp == NULL) return NULL;
-	return pApp->m_pOptionInterface;
+	return pApp->m_pOptionInterface.get();
 }
 __forceinline MZFileSystem* ZApplication::GetFileSystem(void)
 {

@@ -88,7 +88,6 @@ public:
 	StringView GetNodeName() const;
 	void GetText(char* sOutStr, int nMaxCharNum);
 	void GetText(ArrayView<char> Out) { GetText(Out.data(), int(Out.size())); }
-	void GetTextUnsafe(char* Out) { GetText(Out, INT_MAX); }
 	void SetText(const char* sText);
 
 	int	GetChildNodeCount();

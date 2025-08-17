@@ -340,12 +340,12 @@ bool ZApplication::OnCreate(ZLoadingProgress* pLoadingProgress)
 	ZLoadingProgress giLoading("GameInterface", pLoadingProgress, .35f);
 
 	BEGIN_;
-	m_pGameInterface = new ZGameInterface("Game Interface", Mint::GetInstance()->GetMainFrame(), Mint::GetInstance()->GetMainFrame());
+	m_pGameInterface = std::make_unique<ZGameInterface>("Game Interface", Mint::GetInstance()->GetMainFrame(), Mint::GetInstance()->GetMainFrame());
 	m_pGameInterface->m_nInitialState = m_nInitialState;
 	if (!m_pGameInterface->OnCreate(&giLoading))
 	{
 		mlog("Failed: ZGameInterface OnCreate\n");
-		SAFE_DELETE(m_pGameInterface);
+		m_pGameInterface.reset();
 		return false;
 	}
 
@@ -354,8 +354,8 @@ bool ZApplication::OnCreate(ZLoadingProgress* pLoadingProgress)
 
 	giLoading.UpdateAndDraw(1.f);
 
-	m_pStageInterface = new ZStageInterface();
-	m_pOptionInterface = new ZOptionInterface;
+	m_pStageInterface = std::make_unique<ZStageInterface>();
+	m_pOptionInterface = std::make_unique<ZOptionInterface>();
 
 	__EP(2002);
 
@@ -526,9 +526,9 @@ void ZApplication::OnDestroy()
 	mlog("Destroy console.\n");
 
 	SAFE_DELETE(m_pLogFrame);
-	SAFE_DELETE(m_pGameInterface);
-	SAFE_DELETE(m_pStageInterface);
-	SAFE_DELETE(m_pOptionInterface);
+	m_pGameInterface.reset();
+	m_pStageInterface.reset();
+	m_pOptionInterface.reset();
 
 	m_NPCMeshMgr.DelAll();
 

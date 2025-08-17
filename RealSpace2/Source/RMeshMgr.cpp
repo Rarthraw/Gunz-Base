@@ -20,10 +20,7 @@ RMeshMgr::RMeshMgr()
 	m_mtrl_auto_load = true;
 	m_is_map_object = false;
 
-	m_node_table.reserve(MAX_NODE_TABLE);
-
-	for (int i = 0; i < MAX_NODE_TABLE; i++)
-		m_node_table[i] = NULL;
+	m_node_table.resize(MAX_NODE_TABLE, NULL);
 }
 
 RMeshMgr::~RMeshMgr()
@@ -320,6 +317,10 @@ void RMeshMgr::Del(RMesh* pMesh)
 
 	for (node = m_list.begin(); node != m_list.end();) {
 		if ((*node) == pMesh) {
+			int id = (*node)->m_id;
+			if (id >= 0 && id < (int)m_node_table.size()) {
+				m_node_table[id] = NULL;
+			}
 			(*node)->ClearMtrl();
 			delete (*node);
 			node = m_list.erase(node);
@@ -336,6 +337,9 @@ void RMeshMgr::Del(int id)
 
 	for (node = m_list.begin(); node != m_list.end();) {
 		if ((*node)->m_id == id) {
+			if (id >= 0 && id < (int)m_node_table.size()) {
+				m_node_table[id] = NULL;
+			}
 			(*node)->ClearMtrl();
 			delete (*node);
 			node = m_list.erase(node);
@@ -471,7 +475,7 @@ void RMeshMgr::UnLoad(char* name)
 		std::string filename = pMesh->GetFileName();
 		std::string modelname = pMesh->GetName();
 
-		SAFE_DELETE(pMesh);
+		Del(pMesh);
 
 		AddXml((char*)filename.c_str(), (char*)modelname.c_str(), false, false);
 	}
