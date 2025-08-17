@@ -3495,6 +3495,9 @@ void ZGame::OnPeerShot_Shotgun(ZItem* pItem, ZCharacter* pOwnerCharacter, float 
 				pCharacter->OnDamagedAPlayer(pOwnerCharacter, vShots);
 		}
 
+		for (auto pShotInfo : vShots) {
+			delete pShotInfo;
+		}
 		vShots.clear();
 	}
 
