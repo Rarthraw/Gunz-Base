@@ -382,6 +382,8 @@ protected:
 	MProtectValue<DamageInfo> m_damageInfo;
 
 	int	m_nWhichFootSound;
+	RMATERIAL* m_pLastGroundMaterial;
+	DWORD m_dwLastSoundMaterialCheckTime;
 
 	MProtectValue<DWORD>* m_pMdwInvincibleStartTime;
 	MProtectValue<DWORD>* m_pMdwInvincibleDuration;

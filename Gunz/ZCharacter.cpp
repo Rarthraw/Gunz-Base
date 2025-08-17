@@ -447,6 +447,9 @@ ZCharacter::ZCharacter() : ZCharacterObject(), m_DirectionLower(1, 0, 0), m_Dire
 	m_pMUserAndClanName->Ref().m_szUserAndClanName[0] = 0;
 	m_pMUserAndClanName->MakeCrc();
 	SetInvincibleTime(0);
+
+	m_pLastGroundMaterial = NULL;
+	m_dwLastSoundMaterialCheckTime = 0;
 }
 
 ZCharacter::~ZCharacter()
@@ -1675,10 +1678,19 @@ void ZCharacter::UpdateSound()
 	if (m_pVMesh) {
 		char szSndName[128];
 		RMATERIAL* pMaterial = NULL;
-		RBSPPICKINFO bpi;
-		if (ZGetGame()->GetWorld()->GetBsp()->Pick(GetPosition() + rvector(0, 0, 100), rvector(0, 0, -1), &bpi)) {
-			pMaterial = ZGetGame()->GetWorld()->GetBsp()->GetMaterial(bpi.pNode, bpi.nIndex);
+
+		DWORD dwNow = timeGetTime();
+		if (dwNow - m_dwLastSoundMaterialCheckTime > 200) {
+			m_dwLastSoundMaterialCheckTime = dwNow;
+			RBSPPICKINFO bpi;
+			if (ZGetGame()->GetWorld()->GetBsp()->Pick(GetPosition() + rvector(0, 0, 100), rvector(0, 0, -1), &bpi)) {
+				m_pLastGroundMaterial = ZGetGame()->GetWorld()->GetBsp()->GetMaterial(bpi.pNode, bpi.nIndex);
+			}
+			else {
+				m_pLastGroundMaterial = NULL;
+			}
 		}
+		pMaterial = m_pLastGroundMaterial;
 
 		AniFrameInfo* pInfo = m_pVMesh->GetFrameInfo(ani_mode_lower);
 

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <memory>
 #include "MMatchAgent.h"
 #include "MStageAgent.h"
 #include "MObject.h"
@@ -125,6 +126,7 @@ void MMatchAgent::ConnectToMatchServer(char* pszAddr, int nPort)
 		LOG(LOG_PROG, "Failed to Connect to MatchServer (Err:%d)\n", nErrCode);
 		SetMatchServerTrying(false);
 		SetMatchServerConnected(false);
+		delete pCommObj;
 	}
 	else
 	{
@@ -275,6 +277,7 @@ bool MMatchAgent::OnCommand(MCommand* pCommand)
 					LOG(LOG_FILE, "Failed to Connect to MatchServer (Err:%d)\n", nErrCode);
 					SetMatchServerTrying(false);
 					SetMatchServerConnected(false);
+					delete pCommObj;
 					Disconnect(pCommObj->GetUID());
 				}
 
@@ -554,11 +557,8 @@ void MMatchAgent::SendCommandByUDP(MCommand* pCommand, char* szIP, int nPort)
 	{
 		m_SafeUDP.Send(szIP, nPort, pSendBuf, nSize);
 	}
-	else
-	{
-		delete [] pSendBuf;
-	}
 
+	delete[] pSendBuf;
 	delete pCommand;
 
 }
@@ -584,30 +584,29 @@ void MMatchAgent::ParseUDPPacket(char* pData, MPacketHeader* pPacketHeader, DWOR
 	{
 	case MSGID_RAWCOMMAND:
 		{
-			MCommand* pCmd = new MCommand();
-			if( !pCmd->SetData(pData, &m_CommandManager) )
+			std::unique_ptr<MCommand> pCmd(new MCommand());
+			if (!pCmd->SetData(pData, &m_CommandManager))
 			{
-				delete pCmd;
 				return;
 			}
 
 			if (pCmd->GetID() == MC_UDP_PING)
 			{
 				unsigned int nTimeStamp;
-				if (pCmd->GetParameter(&nTimeStamp, 0, MPT_UINT)==false) break;
+				if (pCmd->GetParameter(&nTimeStamp, 0, MPT_UINT) == false) break;
 
-				MCommand* pCommand = CreateCommand(MC_UDP_PONG, MUID(0,0));
-				pCommand->AddParameter(new MCmdParamUInt( (unsigned int)inet_addr( GetIPString() ) ));
+				MCommand* pCommand = CreateCommand(MC_UDP_PONG, MUID(0, 0));
+				pCommand->AddParameter(new MCmdParamUInt((unsigned int)inet_addr(GetIPString())));
 				pCommand->AddParameter(new MCmdParamUInt(nTimeStamp));
 
 				sockaddr_in Addr;
 				Addr.sin_addr.S_un.S_addr = dwIP;
 				char* pszClient_IP = inet_ntoa(Addr.sin_addr);
-				SendCommandByUDP(pCommand, pszClient_IP, ntohs(wRawPort) );
+				SendCommandByUDP(pCommand, pszClient_IP, ntohs(wRawPort));
 
-				delete pCmd;
-			} else if (pCmd->GetID() == MC_AGENT_PEER_BINDUDP) {
-				pCmd->m_Sender = MUID(0,0);
+			}
+			else if (pCmd->GetID() == MC_AGENT_PEER_BINDUDP) {
+				pCmd->m_Sender = MUID(0, 0);
 				pCmd->m_Receiver = m_This;
 
 				sockaddr_in Addr;
@@ -618,24 +617,25 @@ void MMatchAgent::ParseUDPPacket(char* pData, MPacketHeader* pPacketHeader, DWOR
 
 				MCommandParameterString* pParamIP = (MCommandParameterString*)pCmd->GetParameter(3);
 				MCommandParameterUInt* pParamPort = (MCommandParameterUInt*)pCmd->GetParameter(4);
-				if (pParamIP==NULL || pParamIP->GetType()!=MPT_STR)
+				if (pParamIP == NULL || pParamIP->GetType() != MPT_STR)
 					break;
-				if (pParamPort==NULL || pParamPort->GetType()!=MPT_UINT)
+				if (pParamPort == NULL || pParamPort->GetType() != MPT_UINT)
 					break;
 
-				char pData[1024];
-				MCommandParameterString(pszIP).GetData(pData, 1024);
-				pParamIP->SetData(pData);
-				MCommandParameterUInt(nPort).GetData(pData, 1024);
-				pParamPort->SetData(pData);
+				char pDataBuffer[1024];
+				MCommandParameterString(pszIP).GetData(pDataBuffer, 1024);
+				pParamIP->SetData(pDataBuffer);
+				MCommandParameterUInt(nPort).GetData(pDataBuffer, 1024);
+				pParamPort->SetData(pDataBuffer);
 
-				PostSafeQueue(pCmd);
-			} else if (pCmd->GetID() == MC_AGENT_TUNNELING_UDP) {
-				pCmd->m_Sender = MUID(0,0);
+				PostSafeQueue(pCmd.release());
+			}
+			else if (pCmd->GetID() == MC_AGENT_TUNNELING_UDP) {
+				pCmd->m_Sender = MUID(0, 0);
 				pCmd->m_Receiver = m_This;
 
-				PostSafeQueue(pCmd);
-			} 
+				PostSafeQueue(pCmd.release());
+			}
 		}
 		break;
 	case MSGID_COMMAND:
