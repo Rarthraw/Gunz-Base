@@ -239,7 +239,11 @@ MFrame::MFrame(const char* szName, MWidget* pParent, MListener* pListener)
 
 MFrame::~MFrame(void)
 {
-
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
 }
 
 void MFrame::OnSize(int w, int h)

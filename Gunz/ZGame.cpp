@@ -622,6 +622,30 @@ bool ZGame::CheckGameReady()
 	return false;
 }
 
+void ZGame::ObjectColTestList(ZObject* pOwner, rvector& origin, rvector& to, float fRadius, vector<ZObject*>& out_pTargets)
+{
+	out_pTargets.clear();
+
+	for (ZObjectManager::iterator i = m_ObjectManager.begin(); i != m_ObjectManager.end(); i++)
+	{
+		ZObject* pc = i->second;
+
+		if (pc == pOwner)
+			continue;
+
+		if (!pc->IsVisible())
+			continue;
+
+		if (pc->IsDie())
+			continue;
+
+		if (pc->ColTest(origin, to, fRadius, GetTime()))
+		{
+			out_pTargets.push_back(pc);
+		}
+	}
+}
+
 void ZGame::OnGameResponseTimeSync(unsigned int nLocalTimeStamp, unsigned int nGlobalTimeSync)
 {
 	ZGameTimer* pTimer = GetGameTimer();
@@ -3442,6 +3466,13 @@ void ZGame::OnPeerShot_Shotgun(ZItem* pItem, ZCharacter* pOwnerCharacter, float 
 	rvector origdir = to - pos;
 	Normalize(origdir);
 
+	// Optimization: Pre-calculate potential targets to avoid checking all objects for every pellet.
+	vector<ZObject*> TargetObjects;
+	float fRange = pDesc->m_nRange.Ref();
+	if (fRange == 0) fRange = 1000.f;
+	ObjectColTestList(pOwnerCharacter, pos, pos + (origdir * fRange), 150.f, TargetObjects);
+
+
 	int nHitCount = 0;
 	vector<MTD_ShotInfo*> vShots;
 	ZPICKINFO pickinfo;
@@ -3476,7 +3507,7 @@ void ZGame::OnPeerShot_Shotgun(ZItem* pItem, ZCharacter* pOwnerCharacter, float 
 		memset(&pickinfo, 0, sizeof(ZPICKINFO));
 
 		const DWORD dwPickPassFlag = RM_FLAG_ADDITIVE | RM_FLAG_HIDE | RM_FLAG_PASSROCKET | RM_FLAG_PASSBULLET;
-		MTD_ShotInfo* pShotInfo = OnPeerShotgun_Damaged(pOwnerCharacter, fShotTime, pos, dir, pickinfo, dwPickPassFlag, v1, v2, pItem, BulletMarkNormal, bBulletMark, nTargetType, bHitEnemy);
+		MTD_ShotInfo* pShotInfo = OnPeerShotgun_Damaged(pOwnerCharacter, fShotTime, pos, dir, pickinfo, dwPickPassFlag, v1, v2, pItem, BulletMarkNormal, bBulletMark, nTargetType, bHitEnemy, &TargetObjects);
 
 		if (pShotInfo)
 			vShots.push_back(pShotInfo);
@@ -3542,7 +3573,7 @@ void ZGame::OnPeerShot_Shotgun(ZItem* pItem, ZCharacter* pOwnerCharacter, float 
 		ZGetStencilLight()->AddLightSource(v1, 2.0f, 200);
 }
 
-MTD_ShotInfo* ZGame::OnPeerShotgun_Damaged(ZObject* pOwner, float fShotTime, const rvector& pos, rvector& dir, ZPICKINFO pickinfo, DWORD dwPickPassFlag, rvector& v1, rvector& v2, ZItem* pItem, rvector& BulletMarkNormal, bool& bBulletMark, ZTargetType& nTargetType, bool& bHitEnemy)
+MTD_ShotInfo* ZGame::OnPeerShotgun_Damaged(ZObject* pOwner, float fShotTime, const rvector& pos, rvector& dir, ZPICKINFO& pickinfo, DWORD dwPickPassFlag, rvector& v1, rvector& v2, ZItem* pItem, rvector& BulletMarkNormal, bool& bBulletMark, ZTargetType& nTargetType, bool& bHitEnemy, const vector<ZObject*>* pTargetObjects)
 {
 	ZCharacter* pTargetCharacter = ZGetGameInterface()->GetCombatInterface()->GetTargetCharacter();
 	bool bReturnValue = !pTargetCharacter;
@@ -3553,18 +3584,52 @@ MTD_ShotInfo* ZGame::OnPeerShotgun_Damaged(ZObject* pOwner, float fShotTime, con
 	if (!pDesc)PROTECT_DEBUG_REGISTER(bReturnValue) { _ASSERT(FALSE); return NULL; }
 
 	bool waterSound = false;
-	bReturnValue = !(ZGetGame()->PickHistory(pOwner, fShotTime, pos, pos + 10000.f * dir, &pickinfo, dwPickPassFlag));
-	if (!(ZGetGame()->PickHistory(pOwner, fShotTime, pos, pos + 10000.f * dir, &pickinfo, dwPickPassFlag)))
+
+	if (pTargetObjects)
 	{
-		PROTECT_DEBUG_REGISTER(bReturnValue)
+		ZObject* pBestHitObject = NULL;
+		float fBestHitDist = FLT_MAX;
+		RPickInfo bestPickInfo;
+
+		for (ZObject* pCandidate : *pTargetObjects)
 		{
-			v1 = pos;
-			v2 = pos + dir * 10000.f;
-			nTargetType = ZTT_NOTHING;
-			waterSound = GetWorld()->GetWaters()->CheckSpearing(v1, v2, 250, 0.3, !waterSound);
-			return NULL;
+			rvector hitPos;
+			ZOBJECTHITTEST ht = pCandidate->HitTest(pos, pos + 10000.f * dir, fShotTime, &hitPos);
+			if (ht != ZOH_NONE) {
+				float fDistToChar = Magnitude(hitPos - pos);
+				if (fDistToChar < fBestHitDist) {
+					pBestHitObject = pCandidate;
+					fBestHitDist = fDistToChar;
+					bestPickInfo.vOut = hitPos;
+					switch (ht) {
+					case ZOH_HEAD: bestPickInfo.parts = eq_parts_head; break;
+					case ZOH_BODY: bestPickInfo.parts = eq_parts_chest; break;
+					case ZOH_LEGS:	bestPickInfo.parts = eq_parts_legs; break;
+					}
+				}
+			}
+		}
+		if (pBestHitObject) {
+			pickinfo.pObject = pBestHitObject;
+			pickinfo.info = bestPickInfo;
 		}
 	}
+	else
+	{
+		bReturnValue = !(ZGetGame()->PickHistory(pOwner, fShotTime, pos, pos + 10000.f * dir, &pickinfo, dwPickPassFlag));
+		if (bReturnValue)
+		{
+			PROTECT_DEBUG_REGISTER(bReturnValue)
+			{
+				v1 = pos;
+				v2 = pos + dir * 10000.f;
+				nTargetType = ZTT_NOTHING;
+				waterSound = GetWorld()->GetWaters()->CheckSpearing(v1, v2, 250, 0.3, !waterSound);
+				return NULL;
+			}
+		}
+	}
+
 	bReturnValue = (!pickinfo.pObject) && (!pickinfo.bBspPicked);
 	if (pickinfo.bBspPicked)
 	{

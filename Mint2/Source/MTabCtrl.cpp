@@ -46,6 +46,12 @@ MTabCtrl::MTabCtrl(MWidget* pParent, MListener* pListener) : MWidget("TabCtrl", 
 
 MTabCtrl::~MTabCtrl(void)
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
+
 	RemoveAll();
 }
 

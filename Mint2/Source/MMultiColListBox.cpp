@@ -27,6 +27,12 @@ MMultiColListBox::MMultiColListBox(const char* szName, MWidget* pParent, MListen
 
 MMultiColListBox::~MMultiColListBox()
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
+
 	RemoveAll();
 	delete m_pScrollBar;
 }

@@ -198,6 +198,12 @@ MPopupMenu::MPopupMenu(const char* szName, MWidget* pParent, MListener* pListene
 
 MPopupMenu::~MPopupMenu(void)
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
+
 	while(m_Children.GetCount()>0){
 		MWidget* pWidget = m_Children.Get(0);
 		delete pWidget;

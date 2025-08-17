@@ -30,8 +30,8 @@
 	private:													\
 	static CLASS_LOOK	m_DefaultLook;							\
 	static CLASS_LOOK*	m_pStaticLook;							\
-	CLASS_LOOK*			m_pCustomLook;							\
 	protected:													\
+	CLASS_LOOK*			m_pCustomLook;							\
 	virtual void OnDraw(MDrawContext* pDC);						\
 	public:														\
 	static void ChangeLook(CLASS_LOOK* pLook);					\

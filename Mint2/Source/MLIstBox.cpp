@@ -312,6 +312,12 @@ MListBox::MListBox(MWidget* pParent, MListener* pListener)
 
 MListBox::~MListBox(void)
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
+
 	m_Items.DeleteAll();
 	if (m_pScrollBar != NULL) delete m_pScrollBar;
 }

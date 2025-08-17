@@ -656,6 +656,12 @@ MCOLOR MTextArea::GetTextColor(void)
 
 MTextArea::~MTextArea()
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
+
 	delete m_pScrollBar;
 }
 

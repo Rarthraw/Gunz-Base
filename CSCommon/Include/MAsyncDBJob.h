@@ -154,10 +154,16 @@ public:
 		m_uid			= uid;
 		m_nAID			= nAID;
 		m_nCharIndex	= nCharIndex;
+		m_pCharInfo		= NULL;
 		m_DeleteState	= MMCDS_NORMAL;
 	}
 	virtual ~MAsyncDBJob_GetCharInfo()			
 	{
+		if (m_pCharInfo)
+		{
+			delete m_pCharInfo;
+			m_pCharInfo = NULL;
+		}
 	}
 
 	const MUID&					GetUID()				{ return m_uid; }

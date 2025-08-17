@@ -69,4 +69,9 @@ MSlider::MSlider(MWidget* pParent, MListener* pListener)
 
 MSlider::~MSlider(void)
 {
+	if (m_pCustomLook)
+	{
+		delete m_pCustomLook;
+		m_pCustomLook = NULL;
+	}
 }
