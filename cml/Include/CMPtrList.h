@@ -1,6 +1,6 @@
 //	CMPtrList.h
 //		Pointer Linked List
-//		ì´ì¥í˜¸ ( 99-01-24  )
+//		ÀÌÀåÈ£ ( 99-01-24  )
 //////////////////////////////////////////////////////////////////////
 
 #ifndef CMPTRLIST_H
@@ -8,7 +8,7 @@
 
 #include <crtdbg.h>			// _ASSERT
 
-// ë¦¬ìŠ¤íŠ¸ë¥¼ êµ¬ì„±í•  ë ˆì½”ë“œ
+// ¸®½ºÆ®¸¦ ±¸¼ºÇÒ ·¹ÄÚµå
 template<class NEW_TYPE>
 class CMPtrRecord{
 	CMPtrRecord<NEW_TYPE>*	m_lpPrevious;
@@ -16,128 +16,128 @@ class CMPtrRecord{
 public:
 	NEW_TYPE*			m_lpContent;
 
-	// ë©¤ë²„ ì´ˆê¸°í™”
+	// ¸â¹ö ÃÊ±âÈ­
 	CMPtrRecord(void){
 		m_lpNext		=NULL;
 		m_lpPrevious	=NULL;
 		m_lpContent		=NULL;
 	}
-	// ì´ì „ ë…¸ë“œ ì„¸íŒ…
+	// ÀÌÀü ³ëµå ¼¼ÆÃ
 	void SetPreviousPointer(CMPtrRecord<NEW_TYPE>* pprevious){
 		m_lpPrevious=pprevious;
 	}
-	// ì´ì „ ë…¸ë“œ ì–»ê¸°
+	// ÀÌÀü ³ëµå ¾ò±â
 	CMPtrRecord<NEW_TYPE>* GetPreviousPointer(void){
 		return m_lpPrevious;
 	}
-	// ë‹¤ìŒ ë…¸ë“œ ì„¸íŒ…
+	// ´ÙÀ½ ³ëµå ¼¼ÆÃ
 	void SetNextPointer(CMPtrRecord<NEW_TYPE>* pnext){
 		m_lpNext=pnext;
 	}
-	// ë‹¤ìŒ ë…¸ë“œ ì–»ê¸°
+	// ´ÙÀ½ ³ëµå ¾ò±â
 	CMPtrRecord<NEW_TYPE>* GetNextPointer(void){
 		return m_lpNext;
 	}
-	// ë‚´ìš© ì–»ê¸°
+	// ³»¿ë ¾ò±â
 	NEW_TYPE *Get(void){
 		return m_lpContent;
 	}
 	/*
-	ë ˆí¼ëŸ°ìŠ¤ëŠ” ëª¨í˜¸í•¨ì„ ìœ ë°œí•¨ìœ¼ë¡œ, ì‚¬ìš©í•˜ì§€ ì•ŠëŠ”ë‹¤.
+	·¹ÆÛ·±½º´Â ¸ğÈ£ÇÔÀ» À¯¹ßÇÔÀ¸·Î, »ç¿ëÇÏÁö ¾Ê´Â´Ù.
 	NEW_TYPE &Get(void){
 		return *m_lpContent;
 	}
 	*/
 };
 
-// ë¦¬ìŠ¤íŠ¸ í´ë˜ìŠ¤
+// ¸®½ºÆ® Å¬·¡½º
 template<class NEW_TYPE>
 class CMPtrList{
 private:
-	CMPtrRecord<NEW_TYPE>*		m_lpFirstRecord;	// ì²«ë²ˆì§¸ ë ˆì½”ë“œ
-	CMPtrRecord<NEW_TYPE>*		m_lpLastRecord;		// ì²«ë²ˆì§¸ ë ˆì½”ë“œ
-	CMPtrRecord<NEW_TYPE>*		m_lpCurrentRecord;	// í˜„ì¬ ë ˆì½”ë“œ
-	int						m_nListCount;		// ë ˆì½”ë“œì˜ ê°œìˆ˜
-	int						m_nCurrentPosition;	// í˜„ì¬ ìœ„ì¹˜
+	CMPtrRecord<NEW_TYPE>*		m_lpFirstRecord;	// Ã¹¹øÂ° ·¹ÄÚµå
+	CMPtrRecord<NEW_TYPE>*		m_lpLastRecord;		// Ã¹¹øÂ° ·¹ÄÚµå
+	CMPtrRecord<NEW_TYPE>*		m_lpCurrentRecord;	// ÇöÀç ·¹ÄÚµå
+	int						m_nListCount;		// ·¹ÄÚµåÀÇ °³¼ö
+	int						m_nCurrentPosition;	// ÇöÀç À§Ä¡
 
-	//MString					m_lpszErrorString;	// ì—ëŸ¬ ìŠ¤íŠ¸ë§
+	//MString					m_lpszErrorString;	// ¿¡·¯ ½ºÆ®¸µ
 public:
-	// ë³€ìˆ˜ ì´ˆê¸°í™”
+	// º¯¼ö ÃÊ±âÈ­
 	CMPtrList(void);
-	// ë¦¬ìŠ¤íŠ¸ í•´ì œ(ì•Œì•„ì„œ ë ˆì½”ë“œë¥¼ ëª¨ë‘ ì‚­ì œí•œë‹¤)
+	// ¸®½ºÆ® ÇØÁ¦(¾Ë¾Æ¼­ ·¹ÄÚµå¸¦ ¸ğµÎ »èÁ¦ÇÑ´Ù)
 	virtual ~CMPtrList(void);
 
-	// ì—ëŸ¬ ë©”ì„¸ì§€ ì–»ê¸°
+	// ¿¡·¯ ¸Ş¼¼Áö ¾ò±â
 	//MString GetErrorMessage(void){return m_lpszErrorString;}
 
-	// í˜„ì¬ ìœ„ì¹˜ ì´ì „ì— ë ˆì½”ë“œ ì‚½ì…(newë¡œ ìƒì„±ëœ ê°ì²´ê°€ ê·¸ëŒ€ë¡œ ë°•íŒë‹¤.)
+	// ÇöÀç À§Ä¡ ÀÌÀü¿¡ ·¹ÄÚµå »ğÀÔ(new·Î »ı¼ºµÈ °´Ã¼°¡ ±×´ë·Î ¹ÚÈù´Ù.)
 	bool InsertBefore(NEW_TYPE *lpRecord);
-	// í˜„ì¬ ìœ„ì¹˜ ë‹¤ìŒì— ë ˆì½”ë“œ ì‚½ì…(newë¡œ ìƒì„±ëœ ê°ì²´ê°€ ê·¸ëŒ€ë¡œ ë°•íŒë‹¤.)
+	// ÇöÀç À§Ä¡ ´ÙÀ½¿¡ ·¹ÄÚµå »ğÀÔ(new·Î »ı¼ºµÈ °´Ã¼°¡ ±×´ë·Î ¹ÚÈù´Ù.)
 	bool AddAfter(NEW_TYPE *lpRecord);
-	// í˜„ì¬ ìœ„ì¹˜ ë‹¤ìŒì— ë ˆì½”ë“œ ì‚½ì…(newë¡œ ìƒì„±ëœ ê°ì²´ê°€ ê·¸ëŒ€ë¡œ ë°•íŒë‹¤.)
+	// ÇöÀç À§Ä¡ ´ÙÀ½¿¡ ·¹ÄÚµå »ğÀÔ(new·Î »ı¼ºµÈ °´Ã¼°¡ ±×´ë·Î ¹ÚÈù´Ù.)
 	bool Insert(NEW_TYPE *lpRecord);
-	// ë§¨ ë’¤ì— ë ˆì½”ë“œ ì¶”ê°€(newë¡œ ìƒì„±ëœ ê°ì²´ê°€ ê·¸ëŒ€ë¡œ ë°•íŒë‹¤.)
+	// ¸Ç µÚ¿¡ ·¹ÄÚµå Ãß°¡(new·Î »ı¼ºµÈ °´Ã¼°¡ ±×´ë·Î ¹ÚÈù´Ù.)
 	bool Add(NEW_TYPE *lpRecord);
-	// ì†ŒíŠ¸í•´ ê°€ë©´ì„œ ì¶”ê°€(ë‹¨, Compareë£¨í‹´ì´ ìˆì–´ì•¼ í•œë‹¤.)
+	// ¼ÒÆ®ÇØ °¡¸é¼­ Ãß°¡(´Ü, Compare·çÆ¾ÀÌ ÀÖ¾î¾ß ÇÑ´Ù.)
 	bool AddSorted(NEW_TYPE *lpRecord);
 	
-	// í˜„ì¬ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ
+	// ÇöÀç À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦
 	void Delete(void);
-	// ì§€ì •ëœ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ
+	// ÁöÁ¤µÈ À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦
 	void Delete(int iindex);
-	// ëª¨ë“  ë ˆì½”ë“œ ì‚­ì œ
+	// ¸ğµç ·¹ÄÚµå »èÁ¦
 	void DeleteAll(void);
 
 	// Added by Kim young ho
-	// í˜„ì¬ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ, but Recordì˜ contentëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ 
+	// ÇöÀç À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦, but RecordÀÇ content´Â »èÁ¦ÇÏÁö ¾ÊÀ½
 	void DeleteRecord(void);
-	// ì§€ì •ëœ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ, but Recordì˜ contentëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ 
+	// ÁöÁ¤µÈ À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦, but RecordÀÇ content´Â »èÁ¦ÇÏÁö ¾ÊÀ½
 	void DeleteRecord(int iindex);
-	// ëª¨ë“  ë ˆì½”ë“œ ì‚­ì œ, but Recordì˜ contentëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ 
+	// ¸ğµç ·¹ÄÚµå »èÁ¦, but RecordÀÇ content´Â »èÁ¦ÇÏÁö ¾ÊÀ½
 	void DeleteRecordAll(void);
 
-	// ë ˆì½”ë“œì˜ ê°œìˆ˜ ì–»ì–´ë‚´ê¸°
+	// ·¹ÄÚµåÀÇ °³¼ö ¾ò¾î³»±â
 	int GetCount(void){return m_nListCount;}
-	// ë ˆì½”ë“œì˜ í˜„ì¬ ìœ„ì¹˜ ì–»ì–´ë‚´ê¸°
+	// ·¹ÄÚµåÀÇ ÇöÀç À§Ä¡ ¾ò¾î³»±â
 	int GetIndex(void){return m_nCurrentPosition;}
 
 	////////////////////////////////////////////
-	// ë¦¬ìŠ¤íŠ¸ë‚´ì˜ í¬ì¸í„°ë¥¼ ì´ìš©í•œ ì´ë™ë° ê°’ ì–»ê¸°
-	// ì´ì „ ë ˆì½”ë“œë¡œ
+	// ¸®½ºÆ®³»ÀÇ Æ÷ÀÎÅÍ¸¦ ÀÌ¿ëÇÑ ÀÌµ¿¹× °ª ¾ò±â
+	// ÀÌÀü ·¹ÄÚµå·Î
 	bool PreviousRecord(void);
-	// ë‹¤ìŒ ë ˆì½”ë“œë¡œ
+	// ´ÙÀ½ ·¹ÄÚµå·Î
 	bool NextRecord(void);
-	// ì§€ì •ëœ ìœ„ì¹˜ë¡œ
+	// ÁöÁ¤µÈ À§Ä¡·Î
 	void MoveRecord(int iindex);
-	// ë§¨ ì²˜ìŒìœ¼ë¡œ
+	// ¸Ç Ã³À½À¸·Î
 	void MoveFirst(void);
-	// ë§¨ ë§ˆì§€ë§‰ìœ¼ë¡œ
+	// ¸Ç ¸¶Áö¸·À¸·Î
 	void MoveLast(void);
 
-	// í˜„ì¬ ë ˆì½”ë“œì˜ ë‚´ìš©ì„ ì–»ì–´ë‚¸ë‹¤.
+	// ÇöÀç ·¹ÄÚµåÀÇ ³»¿ëÀ» ¾ò¾î³½´Ù.
 	NEW_TYPE *Get(void);
 
-	// ì§€ì •ëœ ì¸ë±ìŠ¤ì˜ ê°’ì„ ì–»ì–´ë‚¸ë‹¤.
+	// ÁöÁ¤µÈ ÀÎµ¦½ºÀÇ °ªÀ» ¾ò¾î³½´Ù.
 	NEW_TYPE *Get(int iindex);
 
-	// ì§€ì •ëœ ì¸ë±ìŠ¤ì˜ ê°’ì„ ì–»ì–´ë‚¸ë‹¤.
-	// ë ˆí¼ëŸ°ìŠ¤ì— ì˜í•œ ëª¨í˜¸í•¨ìœ¼ë¡œ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ”ë‹¤.
+	// ÁöÁ¤µÈ ÀÎµ¦½ºÀÇ °ªÀ» ¾ò¾î³½´Ù.
+	// ·¹ÆÛ·±½º¿¡ ÀÇÇÑ ¸ğÈ£ÇÔÀ¸·Î »ç¿ëÇÏÁö ¾Ê´Â´Ù.
 	//NEW_TYPE &operator[](int iindex);
 
-	// ë‘ê°œì˜ ë ˆì½”ë“œì˜ ê°’ì„ Swapí•œë‹¤.
+	// µÎ°³ÀÇ ·¹ÄÚµåÀÇ °ªÀ» SwapÇÑ´Ù.
 	void Swap(int nIndex1,int nIndex2);
 
-	// Record Compare Function. Sortë¥¼ ìœ„í•´ virtualë¡œ ê³„ìŠ¹ë°›ì•„ì•¼ í•œë‹¤.
+	// Record Compare Function. Sort¸¦ À§ÇØ virtual·Î °è½Â¹Ş¾Æ¾ß ÇÑ´Ù.
 	virtual int Compare(NEW_TYPE *lpRecord1,NEW_TYPE *lpRecord2){return -10;/*false*/}
 
-	// Quick Sortë¥¼ ì‹¤í–‰í•œë‹¤.
+	// Quick Sort¸¦ ½ÇÇàÇÑ´Ù.
 	void Sort(void);
 private:
-	// Quick Sortì˜ ì„œë¸Œ í•¨ìˆ˜
+	// Quick SortÀÇ ¼­ºê ÇÔ¼ö
 	void QuickSort(int first,int last);
 };
 
-// ë³€ìˆ˜ ì´ˆê¸°í™”
+// º¯¼ö ÃÊ±âÈ­
 template<class NEW_TYPE>
 CMPtrList<NEW_TYPE>::CMPtrList(void)
 {
@@ -148,7 +148,7 @@ CMPtrList<NEW_TYPE>::CMPtrList(void)
 	m_nCurrentPosition=0;
 }
 
-// ë¦¬ìŠ¤íŠ¸ í•´ì œ(ì•Œì•„ì„œ ë ˆì½”ë“œë¥¼ ëª¨ë‘ ì‚­ì œí•œë‹¤)
+// ¸®½ºÆ® ÇØÁ¦(¾Ë¾Æ¼­ ·¹ÄÚµå¸¦ ¸ğµÎ »èÁ¦ÇÑ´Ù)
 template<class NEW_TYPE>
 CMPtrList<NEW_TYPE>::~CMPtrList(void)
 {
@@ -166,7 +166,7 @@ bool CMPtrList<NEW_TYPE>::InsertBefore(NEW_TYPE *lpRecord)
 {
 	_ASSERT(lpRecord!=NULL);
 
-	// ë¦¬ìŠ¤íŠ¸ì˜ ì²« ë ˆì½”ë“œì´ë©´
+	// ¸®½ºÆ®ÀÇ Ã¹ ·¹ÄÚµåÀÌ¸é
 	if(m_nListCount==0){
 		CMPtrRecord<NEW_TYPE> *ptemp;
 		ptemp=new CMPtrRecord<NEW_TYPE>;
@@ -174,7 +174,7 @@ bool CMPtrList<NEW_TYPE>::InsertBefore(NEW_TYPE *lpRecord)
 			//m_lpszErrorString="CMPtrList::Insert() - Memory Allocation Error";
 			return false;
 		}
-		// ë‹¨ìˆœíˆ ë°ì´íƒ€ í¬ì¸í„° ëŒ€ì…. ë°ì´íƒ€ëŠ” ê¸°ì¡´ì— ë™ì ìœ¼ë¡œ í• ë‹¹ë˜ì–´ ìˆì–´ì•¼ í•œë‹¤.
+		// ´Ü¼øÈ÷ µ¥ÀÌÅ¸ Æ÷ÀÎÅÍ ´ëÀÔ. µ¥ÀÌÅ¸´Â ±âÁ¸¿¡ µ¿ÀûÀ¸·Î ÇÒ´çµÇ¾î ÀÖ¾î¾ß ÇÑ´Ù.
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
 		
@@ -188,13 +188,13 @@ bool CMPtrList<NEW_TYPE>::InsertBefore(NEW_TYPE *lpRecord)
 		if(ptemp==NULL)return false;
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
-		// í˜„ì¬ ë ˆì½”ë“œê³¼ ë‹¤ìŒ ë ˆì½”ë“œ ì‚¬ì´ì— ì‚½ì…
-		// ìƒˆ ë ˆì½”ë“œ
+		// ÇöÀç ·¹ÄÚµå°ú ´ÙÀ½ ·¹ÄÚµå »çÀÌ¿¡ »ğÀÔ
+		// »õ ·¹ÄÚµå
 		ptemp->SetPreviousPointer(m_lpCurrentRecord->GetPreviousPointer());
 		ptemp->SetNextPointer(m_lpCurrentRecord);
-		// ë‹¤ìŒ ë ˆì½”ë“œ
+		// ´ÙÀ½ ·¹ÄÚµå
 
-		// í˜„ì¬(ì•) ë ˆì½”ë“œ
+		// ÇöÀç(¾Õ) ·¹ÄÚµå
 		m_lpCurrentRecord->SetPreviousPointer(ptemp);
 
 		if(ptemp->GetPreviousPointer()==NULL)
@@ -202,22 +202,22 @@ bool CMPtrList<NEW_TYPE>::InsertBefore(NEW_TYPE *lpRecord)
 		else
 			ptemp->GetPreviousPointer()->SetNextPointer(ptemp);
 
-		// í˜„ì¬ í¬ì¸í„°ë¥¼ ìƒˆë¡œ ìƒì„±í•œ ë ˆì½”ë“œìœ¼ë¡œ ëŒ€ì¹˜
+		// ÇöÀç Æ÷ÀÎÅÍ¸¦ »õ·Î »ı¼ºÇÑ ·¹ÄÚµåÀ¸·Î ´ëÄ¡
 		m_lpCurrentRecord=ptemp;
 	}
 
-	// ë¦¬ìŠ¤íŠ¸ ì¹´ìš´íŠ¸ ì¦ê°€
+	// ¸®½ºÆ® Ä«¿îÆ® Áõ°¡
 	m_nListCount++;
 	return true;
 }
 
-// ë ˆì½”ë“œ ì‚½ì…
+// ·¹ÄÚµå »ğÀÔ
 template<class NEW_TYPE>
 bool CMPtrList<NEW_TYPE>::AddAfter(NEW_TYPE *lpRecord)
 {
 	_ASSERT(lpRecord!=NULL);
 
-	// ë¦¬ìŠ¤íŠ¸ì˜ ì²« ë ˆì½”ë“œì´ë©´
+	// ¸®½ºÆ®ÀÇ Ã¹ ·¹ÄÚµåÀÌ¸é
 	if(m_nListCount==0){
 		CMPtrRecord<NEW_TYPE> *ptemp;
 		ptemp=new CMPtrRecord<NEW_TYPE>;
@@ -225,7 +225,7 @@ bool CMPtrList<NEW_TYPE>::AddAfter(NEW_TYPE *lpRecord)
 			//m_lpszErrorString="CMPtrList::Insert() - Memory Allocation Error";
 			return false;
 		}
-		// ë‹¨ìˆœíˆ ë°ì´íƒ€ í¬ì¸í„° ëŒ€ì…. ë°ì´íƒ€ëŠ” ê¸°ì¡´ì— ë™ì ìœ¼ë¡œ í• ë‹¹ë˜ì–´ ìˆì–´ì•¼ í•œë‹¤.
+		// ´Ü¼øÈ÷ µ¥ÀÌÅ¸ Æ÷ÀÎÅÍ ´ëÀÔ. µ¥ÀÌÅ¸´Â ±âÁ¸¿¡ µ¿ÀûÀ¸·Î ÇÒ´çµÇ¾î ÀÖ¾î¾ß ÇÑ´Ù.
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
 		
@@ -239,39 +239,39 @@ bool CMPtrList<NEW_TYPE>::AddAfter(NEW_TYPE *lpRecord)
 		if(ptemp==NULL)return false;
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
-		// í˜„ì¬ ë ˆì½”ë“œê³¼ ë‹¤ìŒ ë ˆì½”ë“œ ì‚¬ì´ì— ì‚½ì…
-		// ìƒˆ ë ˆì½”ë“œ
+		// ÇöÀç ·¹ÄÚµå°ú ´ÙÀ½ ·¹ÄÚµå »çÀÌ¿¡ »ğÀÔ
+		// »õ ·¹ÄÚµå
 		ptemp->SetPreviousPointer(m_lpCurrentRecord);
 		ptemp->SetNextPointer(m_lpCurrentRecord->GetNextPointer());
-		// ë‹¤ìŒ ë ˆì½”ë“œ
+		// ´ÙÀ½ ·¹ÄÚµå
 		if((ptemp->GetNextPointer()!=NULL))
 			(ptemp->GetNextPointer())->SetPreviousPointer(ptemp);
 		else{
-			// ë§ˆì§€ë§‰ì— ì¶”ê°€í•˜ëŠ” ê²ƒì´ë¯€ë¡œ
+			// ¸¶Áö¸·¿¡ Ãß°¡ÇÏ´Â °ÍÀÌ¹Ç·Î
 			m_lpLastRecord=ptemp;
 		}
 
-		// í˜„ì¬(ì•) ë ˆì½”ë“œ
+		// ÇöÀç(¾Õ) ·¹ÄÚµå
 		m_lpCurrentRecord->SetNextPointer(ptemp);
 
-		// í˜„ì¬ í¬ì¸í„°ë¥¼ ìƒˆë¡œ ìƒì„±í•œ ë ˆì½”ë“œìœ¼ë¡œ ëŒ€ì¹˜
+		// ÇöÀç Æ÷ÀÎÅÍ¸¦ »õ·Î »ı¼ºÇÑ ·¹ÄÚµåÀ¸·Î ´ëÄ¡
 		m_lpCurrentRecord=ptemp;
 
 		m_nCurrentPosition++;
 	}
 
-	// ë¦¬ìŠ¤íŠ¸ ì¹´ìš´íŠ¸ ì¦ê°€
+	// ¸®½ºÆ® Ä«¿îÆ® Áõ°¡
 	m_nListCount++;
 	return true;
 }
 
-// ë ˆì½”ë“œ ì‚½ì…
+// ·¹ÄÚµå »ğÀÔ
 template<class NEW_TYPE>
 bool CMPtrList<NEW_TYPE>::Insert(NEW_TYPE *lpRecord)
 {
 	_ASSERT(lpRecord!=NULL);
 
-	// ë¦¬ìŠ¤íŠ¸ì˜ ì²« ë ˆì½”ë“œì´ë©´
+	// ¸®½ºÆ®ÀÇ Ã¹ ·¹ÄÚµåÀÌ¸é
 	if(m_nListCount==0){
 		CMPtrRecord<NEW_TYPE> *ptemp;
 		ptemp=new CMPtrRecord<NEW_TYPE>;
@@ -279,7 +279,7 @@ bool CMPtrList<NEW_TYPE>::Insert(NEW_TYPE *lpRecord)
 			//m_lpszErrorString="CMPtrList::Insert() - Memory Allocation Error";
 			return false;
 		}
-		// ë‹¨ìˆœíˆ ë°ì´íƒ€ í¬ì¸í„° ëŒ€ì…. ë°ì´íƒ€ëŠ” ê¸°ì¡´ì— ë™ì ìœ¼ë¡œ í• ë‹¹ë˜ì–´ ìˆì–´ì•¼ í•œë‹¤.
+		// ´Ü¼øÈ÷ µ¥ÀÌÅ¸ Æ÷ÀÎÅÍ ´ëÀÔ. µ¥ÀÌÅ¸´Â ±âÁ¸¿¡ µ¿ÀûÀ¸·Î ÇÒ´çµÇ¾î ÀÖ¾î¾ß ÇÑ´Ù.
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
 		
@@ -293,33 +293,33 @@ bool CMPtrList<NEW_TYPE>::Insert(NEW_TYPE *lpRecord)
 		if(ptemp==NULL)return false;
 		ptemp->m_lpContent=lpRecord;
 		//memcpy(&(ptemp->m_lpContent),lpRecord,sizeof(NEW_TYPE));
-		// í˜„ì¬ ë ˆì½”ë“œê³¼ ë‹¤ìŒ ë ˆì½”ë“œ ì‚¬ì´ì— ì‚½ì…
-		// ìƒˆ ë ˆì½”ë“œ
+		// ÇöÀç ·¹ÄÚµå°ú ´ÙÀ½ ·¹ÄÚµå »çÀÌ¿¡ »ğÀÔ
+		// »õ ·¹ÄÚµå
 		ptemp->SetPreviousPointer(m_lpCurrentRecord);
 		ptemp->SetNextPointer(m_lpCurrentRecord->GetNextPointer());
-		// ë‹¤ìŒ ë ˆì½”ë“œ
+		// ´ÙÀ½ ·¹ÄÚµå
 		if((ptemp->GetNextPointer()!=NULL))
 			(ptemp->GetNextPointer())->SetPreviousPointer(ptemp);
 		else{
-			// ë§ˆì§€ë§‰ì— ì¶”ê°€í•˜ëŠ” ê²ƒì´ë¯€ë¡œ
+			// ¸¶Áö¸·¿¡ Ãß°¡ÇÏ´Â °ÍÀÌ¹Ç·Î
 			m_lpLastRecord=ptemp;
 		}
 
-		// í˜„ì¬(ì•) ë ˆì½”ë“œ
+		// ÇöÀç(¾Õ) ·¹ÄÚµå
 		m_lpCurrentRecord->SetNextPointer(ptemp);
 
-		// í˜„ì¬ í¬ì¸í„°ë¥¼ ìƒˆë¡œ ìƒì„±í•œ ë ˆì½”ë“œìœ¼ë¡œ ëŒ€ì¹˜
+		// ÇöÀç Æ÷ÀÎÅÍ¸¦ »õ·Î »ı¼ºÇÑ ·¹ÄÚµåÀ¸·Î ´ëÄ¡
 		m_lpCurrentRecord=ptemp;
 
 		m_nCurrentPosition++;
 	}
 
-	// ë¦¬ìŠ¤íŠ¸ ì¹´ìš´íŠ¸ ì¦ê°€
+	// ¸®½ºÆ® Ä«¿îÆ® Áõ°¡
 	m_nListCount++;
 	return true;
 }
 
-// ë ˆì½”ë“œ ì¶”ê°€
+// ·¹ÄÚµå Ãß°¡
 template<class NEW_TYPE>
 bool CMPtrList<NEW_TYPE>::Add(NEW_TYPE *lpRecord)
 {
@@ -380,11 +380,11 @@ bool CMPtrList<NEW_TYPE>::AddSorted(NEW_TYPE *lpRecord)
 	}
 }
 
-// í˜„ì¬ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ
+// ÇöÀç À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::Delete(void)
 {
-	// í˜„ì¬ ë ˆì½”ë“œì˜ í¬ì¸í„°ëŠ” NULLì¼ìˆ˜ ì—†ë‹¤.
+	// ÇöÀç ·¹ÄÚµåÀÇ Æ÷ÀÎÅÍ´Â NULLÀÏ¼ö ¾ø´Ù.
 	_ASSERT(m_lpCurrentRecord!=NULL);
 
 	CMPtrRecord<NEW_TYPE>* pprevious;
@@ -393,33 +393,33 @@ void CMPtrList<NEW_TYPE>::Delete(void)
 	pprevious	=m_lpCurrentRecord->GetPreviousPointer();
 	pnext		=m_lpCurrentRecord->GetNextPointer();
 
-	// ì• ë ˆì½”ë“œ
+	// ¾Õ ·¹ÄÚµå
 	if(pprevious!=NULL){
-	// ì• ë ˆì½”ë“œê°€ ì²˜ìŒì´ ì•„ë‹ˆë©´...
+	// ¾Õ ·¹ÄÚµå°¡ Ã³À½ÀÌ ¾Æ´Ï¸é...
 		pprevious->SetNextPointer(pnext);
 	}
 	else{
-	// ì• ë ˆì½”ë“œê°€ ì²« ë ˆì½”ë“œì¼ ê²½ìš°
+	// ¾Õ ·¹ÄÚµå°¡ Ã¹ ·¹ÄÚµåÀÏ °æ¿ì
 		m_lpFirstRecord=pnext;
 	}
 	
-	// ë’¤ ë ˆì½”ë“œ
+	// µÚ ·¹ÄÚµå
 	if(pnext!=NULL){
-	// ì´ ë ˆì½”ë“œê°€ ë§ˆì§€ë§‰ì´ ì•„ë‹ˆë©´...
+	// ÀÌ ·¹ÄÚµå°¡ ¸¶Áö¸·ÀÌ ¾Æ´Ï¸é...
 		pnext->SetPreviousPointer(pprevious);
 	}
 	else{
-	// ë’¤ ë ˆì½”ë“œê°€ ë§ˆì§€ë§‰ì´ë©´
+	// µÚ ·¹ÄÚµå°¡ ¸¶Áö¸·ÀÌ¸é
 		m_lpLastRecord=pprevious;
 	}
 
-	// í˜„ì¬ ë ˆì½”ë“œì˜ ë‚´ìš© ë©”ëª¨ë¦¬ì—ì„œ ì‚­ì œ
+	// ÇöÀç ·¹ÄÚµåÀÇ ³»¿ë ¸Ş¸ğ¸®¿¡¼­ »èÁ¦
 	//_ASSERT(m_lpCurrentRecord->m_lpContent!=NULL);
-	delete m_lpCurrentRecord->m_lpContent;
-	// í˜„ì¬ ë ˆì½”ë“œ ë©”ëª¨ë¦¬ì—ì„œ ì‚­ì œ
+	//delete m_lpCurrentRecord->m_lpContent;
+	// ÇöÀç ·¹ÄÚµå ¸Ş¸ğ¸®¿¡¼­ »èÁ¦
 	delete m_lpCurrentRecord;
 
-	// í˜„ì¬ í¬ì¸í„° ì§€ì •
+	// ÇöÀç Æ÷ÀÎÅÍ ÁöÁ¤
 	if(pnext!=NULL)
 		m_lpCurrentRecord=pnext;
 	else{
@@ -432,11 +432,11 @@ void CMPtrList<NEW_TYPE>::Delete(void)
 			m_lpCurrentRecord=NULL;
 	}
 
-	// ë¦¬ìŠ¤íŠ¸ ì¹´ìš´íŠ¸ ê°ì†Œ
+	// ¸®½ºÆ® Ä«¿îÆ® °¨¼Ò
 	m_nListCount--;
 }
 
-// ì›í•˜ëŠ” ì¸ë±ìŠ¤ë¥¼ ì§€ì›€
+// ¿øÇÏ´Â ÀÎµ¦½º¸¦ Áö¿ò
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::Delete(int iindex)
 {
@@ -444,7 +444,7 @@ void CMPtrList<NEW_TYPE>::Delete(int iindex)
 	Delete();
 }
 
-// ëª¨ë“  ë ˆì½”ë“œ ì‚­ì œ
+// ¸ğµç ·¹ÄÚµå »èÁ¦
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::DeleteAll(void)
 {
@@ -453,11 +453,11 @@ void CMPtrList<NEW_TYPE>::DeleteAll(void)
 	m_nCurrentPosition=0;
 }
 
-// í˜„ì¬ ìœ„ì¹˜ì˜ ë ˆì½”ë“œë¥¼ ì‚­ì œ, but Recordì˜ contentëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ  
+// ÇöÀç À§Ä¡ÀÇ ·¹ÄÚµå¸¦ »èÁ¦, but RecordÀÇ content´Â »èÁ¦ÇÏÁö ¾ÊÀ½
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::DeleteRecord(void)
 {
-	// í˜„ì¬ ë ˆì½”ë“œì˜ í¬ì¸í„°ëŠ” NULLì¼ìˆ˜ ì—†ë‹¤.
+	// ÇöÀç ·¹ÄÚµåÀÇ Æ÷ÀÎÅÍ´Â NULLÀÏ¼ö ¾ø´Ù.
 	_ASSERT(m_lpCurrentRecord!=NULL);
 
 	CMPtrRecord<NEW_TYPE>* pprevious;
@@ -466,30 +466,30 @@ void CMPtrList<NEW_TYPE>::DeleteRecord(void)
 	pprevious	=m_lpCurrentRecord->GetPreviousPointer();
 	pnext		=m_lpCurrentRecord->GetNextPointer();
 
-	// ì• ë ˆì½”ë“œ
+	// ¾Õ ·¹ÄÚµå
 	if(pprevious!=NULL){
-	// ì• ë ˆì½”ë“œê°€ ì²˜ìŒì´ ì•„ë‹ˆë©´...
+	// ¾Õ ·¹ÄÚµå°¡ Ã³À½ÀÌ ¾Æ´Ï¸é...
 		pprevious->SetNextPointer(pnext);
 	}
 	else{
-	// ì• ë ˆì½”ë“œê°€ ì²« ë ˆì½”ë“œì¼ ê²½ìš°
+	// ¾Õ ·¹ÄÚµå°¡ Ã¹ ·¹ÄÚµåÀÏ °æ¿ì
 		m_lpFirstRecord=pnext;
 	}
 	
-	// ë’¤ ë ˆì½”ë“œ
+	// µÚ ·¹ÄÚµå
 	if(pnext!=NULL){
-	// ì´ ë ˆì½”ë“œê°€ ë§ˆì§€ë§‰ì´ ì•„ë‹ˆë©´...
+	// ÀÌ ·¹ÄÚµå°¡ ¸¶Áö¸·ÀÌ ¾Æ´Ï¸é...
 		pnext->SetPreviousPointer(pprevious);
 	}
 	else{
-	// ë’¤ ë ˆì½”ë“œê°€ ë§ˆì§€ë§‰ì´ë©´
+	// µÚ ·¹ÄÚµå°¡ ¸¶Áö¸·ÀÌ¸é
 		m_lpLastRecord=pprevious;
 	}
 
-	// í˜„ì¬ ë ˆì½”ë“œ ë©”ëª¨ë¦¬ì—ì„œ ì‚­ì œ
+	// ÇöÀç ·¹ÄÚµå ¸Ş¸ğ¸®¿¡¼­ »èÁ¦
 	delete m_lpCurrentRecord;
 
-	// í˜„ì¬ í¬ì¸í„° ì§€ì •
+	// ÇöÀç Æ÷ÀÎÅÍ ÁöÁ¤
 	if(pnext!=NULL)
 		m_lpCurrentRecord=pnext;
 	else{
@@ -502,11 +502,11 @@ void CMPtrList<NEW_TYPE>::DeleteRecord(void)
 			m_lpCurrentRecord=NULL;
 	}
 
-	// ë¦¬ìŠ¤íŠ¸ ì¹´ìš´íŠ¸ ê°ì†Œ
+	// ¸®½ºÆ® Ä«¿îÆ® °¨¼Ò
 	m_nListCount--;
 }
 
-// ì›í•˜ëŠ” ì¸ë±ìŠ¤ë¥¼ ì§€ì›€, but Recordì˜ content ì‚­ì œí•˜ì§€ ì•ŠìŒ 
+// ¿øÇÏ´Â ÀÎµ¦½º¸¦ Áö¿ò, but RecordÀÇ contentÂ »èÁ¦ÇÏÁö ¾ÊÀ½
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::DeleteRecord(int iindex)
 {
@@ -514,7 +514,7 @@ void CMPtrList<NEW_TYPE>::DeleteRecord(int iindex)
 	DeleteRecord();
 }
 
-// ëª¨ë“  ë ˆì½”ë“œ ì‚­ì œ, but Recordì˜ contentëŠ” ì‚­ì œí•˜ì§€ ì•ŠìŒ 
+// ¸ğµç ·¹ÄÚµå »èÁ¦, but RecordÀÇ content´Â »èÁ¦ÇÏÁö ¾ÊÀ½
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::DeleteRecordAll(void)
 {
@@ -524,12 +524,12 @@ void CMPtrList<NEW_TYPE>::DeleteRecordAll(void)
 }
 
 
-// ì´ì „ ë ˆì½”ë“œë¡œ
+// ÀÌÀü ·¹ÄÚµå·Î
 template<class NEW_TYPE>
 bool CMPtrList<NEW_TYPE>::PreviousRecord(void)
 {
-	// í˜„ì¬ ë ˆì½”ë“œì˜ í¬ì¸í„°ëŠ” NULLì¼ìˆ˜ ì—†ë‹¤.
-	// ì¦‰, ì•„ë¬´ê²ƒë„ ì €ì¥ë˜ì–´ ìˆì§€ ì•Šì€ ìƒíƒœ
+	// ÇöÀç ·¹ÄÚµåÀÇ Æ÷ÀÎÅÍ´Â NULLÀÏ¼ö ¾ø´Ù.
+	// Áï, ¾Æ¹«°Íµµ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀº »óÅÂ
 	_ASSERT(m_lpCurrentRecord!=NULL);
 
 	if((m_lpCurrentRecord->GetPreviousPointer())!=NULL){
@@ -545,12 +545,12 @@ bool CMPtrList<NEW_TYPE>::PreviousRecord(void)
 	}
 }
 
-// ë‹¤ìŒ ë ˆì½”ë“œë¡œ
+// ´ÙÀ½ ·¹ÄÚµå·Î
 template<class NEW_TYPE>
 bool CMPtrList<NEW_TYPE>::NextRecord(void)
 {
-	// í˜„ì¬ ë ˆì½”ë“œì˜ í¬ì¸í„°ëŠ” NULLì¼ìˆ˜ ì—†ë‹¤.
-	// ì¦‰, ì•„ë¬´ê²ƒë„ ì €ì¥ë˜ì–´ ìˆì§€ ì•Šì€ ìƒíƒœ
+	// ÇöÀç ·¹ÄÚµåÀÇ Æ÷ÀÎÅÍ´Â NULLÀÏ¼ö ¾ø´Ù.
+	// Áï, ¾Æ¹«°Íµµ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀº »óÅÂ
 	_ASSERT(m_lpCurrentRecord!=NULL);
 
 	if((m_lpCurrentRecord->GetNextPointer())!=NULL){
@@ -566,11 +566,11 @@ bool CMPtrList<NEW_TYPE>::NextRecord(void)
 	}
 }
 
-// ì§€ì •ëœ ìœ„ì¹˜ë¡œ
+// ÁöÁ¤µÈ À§Ä¡·Î
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::MoveRecord(int iindex)
 {
-	// ì¸ë±ìŠ¤ëŠ” ì§€ì •ëœ ë²”ìœ„ì•ˆì— ìˆì–´ì•¼ í•œë‹¤.
+	// ÀÎµ¦½º´Â ÁöÁ¤µÈ ¹üÀ§¾È¿¡ ÀÖ¾î¾ß ÇÑ´Ù.
 	_ASSERT(iindex<m_nListCount);
 	_ASSERT(iindex>=0);
 	
@@ -589,7 +589,7 @@ void CMPtrList<NEW_TYPE>::MoveRecord(int iindex)
 	}
 }
 
-// ë§¨ ì²˜ìŒìœ¼ë¡œ
+// ¸Ç Ã³À½À¸·Î
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::MoveFirst(void)
 {
@@ -597,7 +597,7 @@ void CMPtrList<NEW_TYPE>::MoveFirst(void)
 	m_lpCurrentRecord=m_lpFirstRecord;
 }
 
-// ë§¨ ë§ˆì§€ë§‰ìœ¼ë¡œ
+// ¸Ç ¸¶Áö¸·À¸·Î
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::MoveLast(void)
 {
@@ -607,18 +607,18 @@ void CMPtrList<NEW_TYPE>::MoveLast(void)
 	}
 }
 
-// í˜„ì¬ ë ˆì½”ë“œì˜ ë‚´ìš©ì„ ì–»ì–´ë‚¸ë‹¤.
+// ÇöÀç ·¹ÄÚµåÀÇ ³»¿ëÀ» ¾ò¾î³½´Ù.
 template<class NEW_TYPE>
 NEW_TYPE *CMPtrList<NEW_TYPE>::Get(void)
 {
-	// í˜„ì¬ ë ˆì½”ë“œì˜ í¬ì¸í„°ëŠ” NULLì¼ìˆ˜ ì—†ë‹¤.
-	// ì¦‰, ì•„ë¬´ê²ƒë„ ì €ì¥ë˜ì–´ ìˆì§€ ì•Šì€ ìƒíƒœ
+	// ÇöÀç ·¹ÄÚµåÀÇ Æ÷ÀÎÅÍ´Â NULLÀÏ¼ö ¾ø´Ù.
+	// Áï, ¾Æ¹«°Íµµ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀº »óÅÂ
 	_ASSERT(m_lpCurrentRecord!=NULL);
 
 	return(m_lpCurrentRecord->Get());
 }
 
-// ì§€ì •ëœ ì¸ë±ìŠ¤ì˜ ê°’ì„ ì–»ì–´ë‚¸ë‹¤.
+// ÁöÁ¤µÈ ÀÎµ¦½ºÀÇ °ªÀ» ¾ò¾î³½´Ù.
 template<class NEW_TYPE>
 NEW_TYPE *CMPtrList<NEW_TYPE>::Get(int iindex)
 {
@@ -626,7 +626,7 @@ NEW_TYPE *CMPtrList<NEW_TYPE>::Get(int iindex)
 	return Get();
 }
 
-// ì§€ì •ëœ ì¸ë±ìŠ¤ì˜ ê°’ì„ ì–»ì–´ë‚¸ë‹¤.
+// ÁöÁ¤µÈ ÀÎµ¦½ºÀÇ °ªÀ» ¾ò¾î³½´Ù.
 /*
 template<class NEW_TYPE>
 NEW_TYPE &CMPtrList<NEW_TYPE>::operator[](int iindex)
@@ -636,7 +636,7 @@ NEW_TYPE &CMPtrList<NEW_TYPE>::operator[](int iindex)
 }
 */
 
-// Quick Sortë¥¼ ì‹¤í–‰í•œë‹¤.
+// Quick Sort¸¦ ½ÇÇàÇÑ´Ù.
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::Sort(void)
 {
@@ -644,7 +644,7 @@ void CMPtrList<NEW_TYPE>::Sort(void)
 	QuickSort(0,GetCount()-1);
 }
 
-// Quick Sortì˜ ì„œë¸Œ í•¨ìˆ˜
+// Quick SortÀÇ ¼­ºê ÇÔ¼ö
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::QuickSort(int first,int last)
 {
@@ -653,7 +653,7 @@ void CMPtrList<NEW_TYPE>::QuickSort(int first,int last)
 	i=first,j=last;
 	NEW_TYPE *pMiddle=Get((first+last)/2);
 
-	// Compare()ë¥¼ virtualë¡œ ê³„ìŠ¹ë°›ì§€ ì•Šìœ¼ë©´ Assetionì„ ë°œìƒì‹œí‚´
+	// Compare()¸¦ virtual·Î °è½Â¹ŞÁö ¾ÊÀ¸¸é AssetionÀ» ¹ß»ı½ÃÅ´
 	_ASSERT(Compare(Get(i),pMiddle)!=-10);
 
 	for(;;){
@@ -667,7 +667,7 @@ void CMPtrList<NEW_TYPE>::QuickSort(int first,int last)
 	if(j+1<last)QuickSort(j+1,last);
 }
 
-// ë‘ê°œì˜ ë ˆì½”ë“œì˜ ê°’ì„ Swapí•œë‹¤.
+// µÎ°³ÀÇ ·¹ÄÚµåÀÇ °ªÀ» SwapÇÑ´Ù.
 template<class NEW_TYPE>
 void CMPtrList<NEW_TYPE>::Swap(int nIndex1,int nIndex2)
 {
