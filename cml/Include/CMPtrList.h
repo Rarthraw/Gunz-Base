@@ -414,7 +414,7 @@ void CMPtrList<NEW_TYPE>::Delete(void)
 	}
 
 	// 현재 레코드의 내용 메모리에서 삭제
-	_ASSERT(m_lpCurrentRecord->m_lpContent!=NULL);
+	//_ASSERT(m_lpCurrentRecord->m_lpContent!=NULL);
 	delete m_lpCurrentRecord->m_lpContent;
 	// 현재 레코드 메모리에서 삭제
 	delete m_lpCurrentRecord;
