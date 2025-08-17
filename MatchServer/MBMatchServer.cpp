@@ -1120,8 +1120,9 @@ void MBMatchServer::SafePushMonitorUDP( const DWORD dwIP, const WORD wPort, cons
 
 bool MBMatchServer::SendMonitorUDP(const DWORD dwIP, const USHORT nPort, const string& strMonitorCommand)
 {
-	char* szMonitorCommand;
-	szMonitorCommand = new char[ strMonitorCommand.length() ];
-	strncpy( szMonitorCommand, strMonitorCommand.c_str(), strMonitorCommand.length() );
-	return m_SafeUDP.Send(dwIP, nPort, szMonitorCommand, static_cast<DWORD>(strMonitorCommand.length()));
+	// The old implementation allocated a new buffer for the string but never deleted it,
+	// causing a memory leak.
+	// Passing strMonitorCommand.c_str() directly is safe because the string object
+	// is guaranteed to be valid for the duration of the Send call.
+	return m_SafeUDP.Send(dwIP, nPort, strMonitorCommand.c_str(), static_cast<DWORD>(strMonitorCommand.length()));
 }
